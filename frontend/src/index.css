@@ -1,0 +1,434 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+:root {
+  --background: #0c0e12;
+  --surface: rgba(12, 14, 18, 0.6);
+  --surface-container: rgba(23, 26, 31, 0.4);
+  --surface-bright: rgba(41, 44, 51, 0.2);
+  --primary: #8ff5ff;
+  --primary-container: #00eefc;
+  --primary-dim: #00deec;
+  --secondary: #ac89ff;
+  --tertiary: #aaffdc;
+  --error: #ff716c;
+
+  --on-surface: #f6f6fc;
+  --on-surface-variant: #aaabb0;
+  --outline-variant: rgba(70, 72, 77, 0.2);
+
+  --font-data: 'Space Grotesk', sans-serif;
+  --font-ui: 'Manrope', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: var(--font-ui);
+  pointer-events: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════════
+   PET BODY — Physics-driven entity
+   ════════════════════════════════════════════ */
+.pet-body {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-container));
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--primary), 0 0 40px rgba(143, 245, 255, 0.15);
+  will-change: transform;
+  pointer-events: auto;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+
+.pet-body:active { cursor: grabbing; }
+
+/* Pet Face */
+.pet-face {
+  display: flex;
+  gap: 18px;
+  margin-top: -4px;
+}
+
+.eye-socket {
+  width: 16px;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pupil {
+  width: 8px;
+  height: 8px;
+  background: var(--on-surface);
+  border-radius: 50%;
+  will-change: transform;
+  transition: transform 0.08s linear;
+}
+
+.mouth {
+  width: 14px;
+  height: 7px;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  transition: all 0.4s ease;
+}
+
+/* ════════════════════════════════════════════
+   MICRO-EXPRESSION ANIMATIONS
+   ════════════════════════════════════════════ */
+
+/* Idle: gentle breathing */
+.anim-idle {
+  animation: breathe 3s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Sleep: dim glow, slow pulse */
+.anim-sleep {
+  background: linear-gradient(135deg, #6a7aab, #4a5580) !important;
+  box-shadow: 0 0 10px rgba(106, 122, 171, 0.4) !important;
+  animation: sleepPulse 4s ease-in-out infinite;
+}
+.anim-sleep .pupil { opacity: 0.1; }
+.anim-sleep .mouth { 
+  width: 10px; height: 2px; 
+  border-radius: 2px;
+  background: rgba(0,0,0,0.2); 
+}
+@keyframes sleepPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.85; }
+}
+
+/* Zoomies: rapid vibrate, hot glow */
+.anim-zoomies {
+  animation: vibrate 0.1s linear infinite;
+  box-shadow: 0 0 30px var(--primary), 0 0 60px rgba(0, 238, 252, 0.4) !important;
+}
+.anim-zoomies .mouth {
+  width: 18px; height: 10px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+}
+@keyframes vibrate {
+  0% { margin-left: -2px; }
+  25% { margin-left: 2px; }
+  50% { margin-left: -1px; }
+  75% { margin-left: 1px; }
+  100% { margin-left: 0; }
+}
+
+/* Bounce: rhythmic hop */
+.anim-bounce {
+  animation: hop 0.5s ease-in-out infinite;
+}
+.anim-bounce .mouth { 
+  border-radius: 50%;
+  width: 12px; height: 12px;
+  background: rgba(0,0,0,0.4);
+}
+@keyframes hop {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -6px; }
+}
+
+/* Walk: gentle sway */
+.anim-walk {
+  animation: sway 1s ease-in-out infinite;
+}
+@keyframes sway {
+  0%, 100% { margin-left: 0; }
+  50% { margin-left: 4px; }
+}
+
+
+/* ════════════════════════════════════════════
+   GLASS PANEL — HUD Overlay
+   ════════════════════════════════════════════ */
+.glass-panel {
+  background: var(--surface-container);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 16px;
+  border-top: 1px solid rgba(143, 245, 255, 0.15);
+  border-left: 1px solid rgba(143, 245, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+  pointer-events: auto;
+}
+
+.drag-handle {
+  height: 24px;
+  width: 100%;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+.drag-handle:active { cursor: grabbing; }
+
+.drag-indicator {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--on-surface-variant);
+  opacity: 0.5;
+}
+
+.panel-content {
+  padding: 12px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  user-select: none;
+}
+
+/* Typography */
+.headline {
+  font-family: var(--font-data);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.label-sm {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-bright);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--outline-variant);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--primary);
+}
+
+/* Personality Chip */
+.personality-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-bright);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--outline-variant);
+}
+
+.personality-value {
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+/* Mood Display */
+.mood-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.mood-value {
+  font-family: var(--font-data);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* ════════════════════════════════════════════
+   LIVE DRIVE GAUGES — The Pulse Bars
+   ════════════════════════════════════════════ */
+.drives-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drive-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drive-row .label-sm {
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.drive-bar-bg {
+  flex: 1;
+  height: 10px;
+  background: rgba(35, 38, 44, 0.8);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.drive-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.8s ease-out, background 0.5s ease;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.drive-val {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 28px;
+  text-align: right;
+  color: var(--on-surface-variant);
+}
+
+/* Action Button */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-container));
+  color: #005d63;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 15px var(--primary);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+
+/* --------------------------------------------
+   3D PET RENDERER
+   -------------------------------------------- */
+.pet-body-3d {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  margin-top: -125px;
+  margin-left: -125px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+.pet-body-3d:active {
+  cursor: grabbing;
+}
+
+/* --------------------------------------------
+   HUD TOGGLES & SELECTORS
+   -------------------------------------------- */
+.render-toggle {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+.toggle-btn {
+  flex: 1;
+  padding: 6px;
+  background: transparent;
+  color: var(--on-surface-variant);
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.toggle-btn.active {
+  background: var(--primary);
+  color: #002b2e;
+  box-shadow: 0 0 10px rgba(113, 245, 255, 0.3);
+}
+
+.model-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+}
+.model-dropdown {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--outline-variant);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  outline: none;
+  width: 140px;
+}
+.model-dropdown option {
+  background: var(--surface-dim);
+  color: var(--on-surface);
+}
+
