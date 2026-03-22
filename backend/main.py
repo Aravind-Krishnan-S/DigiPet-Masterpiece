@@ -243,7 +243,7 @@ class VisionSystem:
             with mss.mss() as sct:
                 monitor = sct.monitors[1]  # Primary monitor
                 sct_img = sct.grab(monitor)
-            img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
+                img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
             # Downscale by 4x to vastly accelerate OCR time
             img = img.resize((img.width // 4, img.height // 4))
             

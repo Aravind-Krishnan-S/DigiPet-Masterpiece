@@ -143,6 +143,9 @@ function AppInner() {
 
       if (petRef.current) {
         petRef.current.style.transform = `translate(${px - 60}px, ${py - 60}px) rotate(${petBody.angle}rad)`;
+        if (Math.random() < 0.01) { // Log occasionally
+          console.log(`Pet Position: x=${px.toFixed(2)}, y=${py.toFixed(2)} | Window: ${w}x${h}`);
+        }
       }
 
       // EYE TRACKING (2D mode): Compute pupil offset toward cursor
